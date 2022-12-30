@@ -10,6 +10,15 @@ fn add_sources(build: &mut cc::Build, root: &str, files: &[&str]) {
 }
 
 fn main() {
+    // for the Rust esp32 IDF configuration, we need to specify the target compilers
+    use std::env;
+    let target = env::var("TARGET").unwrap();
+    
+    if target == "xtensa-esp32-espidf" {
+        env::set_var("CXX", "xtensa-esp32-elf-g++");
+        env::set_var("CC", "xtensa-esp32-elf-gcc");
+    }
+    
     let mut build = cc::Build::new();
 
     build
