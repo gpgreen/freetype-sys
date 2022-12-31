@@ -17,6 +17,8 @@ fn main() {
     if target == "xtensa-esp32-espidf" {
         env::set_var("CXX", "xtensa-esp32-elf-g++");
         env::set_var("CC", "xtensa-esp32-elf-gcc");
+        env::set_var("CFLAGS", "-mlongcalls");
+        env::set_var("CXXFLAGS", "-mlongcalls");
     }
     
     let mut build = cc::Build::new();
