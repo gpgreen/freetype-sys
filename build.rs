@@ -1,3 +1,5 @@
+use std::env;
+
 fn add_sources(build: &mut cc::Build, root: &str, files: &[&str]) {
     let root = std::path::Path::new(root);
     build.files(files.iter().map(|src| {
@@ -10,17 +12,25 @@ fn add_sources(build: &mut cc::Build, root: &str, files: &[&str]) {
 }
 
 fn main() {
-    // for the Rust esp32 IDF configuration, we need to specify the target compilers
-    use std::env;
     let target = env::var("TARGET").unwrap();
-    
+
+    // for the Rust esp32 IDF configuration, we need to specify the target compilers
     if target == "xtensa-esp32-espidf" {
         env::set_var("CXX", "xtensa-esp32-elf-g++");
         env::set_var("CC", "xtensa-esp32-elf-gcc");
         env::set_var("CFLAGS", "-mlongcalls");
         env::set_var("CXXFLAGS", "-mlongcalls");
     }
-    
+
+    if !target.contains("android")
+        && pkg_config::Config::new()
+            .atleast_version("24.3.18")
+            .find("freetype2")
+            .is_ok()
+    {
+        return;
+    }
+
     let mut build = cc::Build::new();
 
     build

@@ -3,14 +3,12 @@
 #![allow(non_upper_case_globals)]
 #![deny(missing_copy_implementations)]
 
-extern crate libc;
-
 use libc::{
     c_char, c_int, c_long, c_short, c_uchar, c_uint, c_ulong, c_ushort, c_void, ptrdiff_t, size_t,
 };
 
 mod tt_tables;
-pub use tt_tables::*;
+pub use crate::tt_tables::*;
 
 // Basic Data Types
 pub type FT_Byte = c_uchar;
@@ -388,7 +386,8 @@ pub const FT_RENDER_MODE_LIGHT: FT_Render_Mode = 1;
 pub const FT_RENDER_MODE_MONO: FT_Render_Mode = 2;
 pub const FT_RENDER_MODE_LCD: FT_Render_Mode = 3;
 pub const FT_RENDER_MODE_LCD_V: FT_Render_Mode = 4;
-pub const FT_RENDER_MODE_MAX: FT_Render_Mode = FT_RENDER_MODE_LCD_V + 1;
+pub const FT_RENDER_MODE_SDF: FT_Render_Mode = 5;
+pub const FT_RENDER_MODE_MAX: FT_Render_Mode = FT_RENDER_MODE_SDF + 1;
 
 pub type FT_LcdFilter = c_uint;
 pub const FT_LCD_FILTER_NONE: FT_LcdFilter = 0;
@@ -1140,14 +1139,7 @@ extern "C" {
         num_contours: FT_Int,
         anoutline: *mut FT_Outline,
     ) -> FT_Error;
-    pub fn FT_Outline_New_Internal(
-        memory: FT_Memory,
-        num_points: FT_UInt,
-        num_contours: FT_Int,
-        anoutline: *mut FT_Outline,
-    ) -> FT_Error;
     pub fn FT_Outline_Done(library: FT_Library, outline: *mut FT_Outline) -> FT_Error;
-    pub fn FT_Outline_Done_Internal(memory: FT_Memory, outline: *mut FT_Outline) -> FT_Error;
     pub fn FT_Outline_Copy(source: *const FT_Outline, target: *mut FT_Outline) -> FT_Error;
     pub fn FT_Outline_Translate(outline: *const FT_Outline, xOffset: FT_Pos, yOffset: FT_Pos);
     pub fn FT_Outline_Transform(outline: *const FT_Outline, matrix: *const FT_Matrix);
@@ -1185,7 +1177,7 @@ extern "C" {
     pub fn FT_GlyphSlot_Oblique(slot: FT_GlyphSlot);
 
     pub fn FT_Get_Multi_Master(face: FT_Face, amaster: *mut FT_Multi_Master) -> FT_Error;
-    pub fn FT_Get_MM_Var(face: FT_Face, amaster: *mut FT_MM_Var) -> FT_Error;
+    pub fn FT_Get_MM_Var(face: FT_Face, amaster: *mut *mut FT_MM_Var) -> FT_Error;
     pub fn FT_Done_MM_Var(library: FT_Library, amaster: *mut FT_MM_Var) -> FT_Error;
     pub fn FT_Set_MM_Design_Coordinates(
         face: FT_Face,
