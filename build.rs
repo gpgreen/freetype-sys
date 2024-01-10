@@ -22,6 +22,23 @@ fn main() {
         return;
     }
 
+    // for the Rust esp32 IDF configuration, we need to specify the target compilers
+    if target == "xtensa-esp32-espidf" {
+        env::set_var("CXX", "xtensa-esp32-elf-g++");
+        env::set_var("CC", "xtensa-esp32-elf-gcc");
+        env::set_var("CFLAGS", "-mlongcalls");
+        env::set_var("CXXFLAGS", "-mlongcalls");
+    } else if target == "xtensa-esp32s3-espidf" {
+        env::set_var("CXX", "xtensa-esp32s3-elf-g++");
+        env::set_var("CC", "xtensa-esp32s3-elf-gcc");
+        env::set_var("AR", "xtensa-esp32s3-elf-ar");
+        env::set_var("CFLAGS", "-mlongcalls -ffunction-sections -fdata-sections");
+        env::set_var(
+            "CXXFLAGS",
+            "-mlongcalls -Wno-frame-address -ffunction-sections -fdata-sections",
+        );
+    }
+
     let mut build = cc::Build::new();
 
     build
